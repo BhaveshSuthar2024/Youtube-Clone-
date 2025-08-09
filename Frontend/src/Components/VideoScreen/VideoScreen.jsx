@@ -425,7 +425,7 @@ function VideoScreen() {
 
         const BASE_URL = "https://youtube-clone-6wbs.onrender.com/api";
 
-        console.log(commentToBeEdited);
+        
         try {
             const response = await axios.put(`${BASE_URL}/v1/comment/${commentId}`, {text: comment}, {withCredentials: true});
            
@@ -961,3 +961,4 @@ function VideoScreen() {
 
 
 export default VideoScreen
+
