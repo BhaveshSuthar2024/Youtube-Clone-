@@ -105,7 +105,6 @@ function UploadVideo({ page, id }) {
     const BASE_URL = "https://youtube-clone-6wbs.onrender.com/api";
 
     const formData = new FormData();
-    console.log(id);
     
 
     formData.append("title", title);
@@ -118,7 +117,7 @@ function UploadVideo({ page, id }) {
 
     try{
       const response = await axios.post(`${BASE_URL}/v1/playlist/upload/${playlistId}`, formData, {withCredentials: true});
-      console.log(response);
+     
 
       setuploadContainerVisible(false);
       setVideoLocalPath("");
@@ -142,8 +141,6 @@ function UploadVideo({ page, id }) {
         id="upload_video_cross_button"
         onClick={() => {
           setuploadContainerVisible(false);
-          console.log("Hello");
-          console.log(uploadContainerVisible);
           
         }}
       >
