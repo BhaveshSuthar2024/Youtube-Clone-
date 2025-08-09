@@ -16,7 +16,7 @@ function AddToPlaylist({id}) {
     const BASE_URL = "https://youtube-clone-6wbs.onrender.com/api";
     try {
       const response = await axios.get(`${BASE_URL}/v1/playlist`, {withCredentials: true});
-      console.log(response);
+      
       setplaylists(response.data.playlists)
     } catch (error) {
       console.log(error);
@@ -31,7 +31,7 @@ function AddToPlaylist({id}) {
     const BASE_URL = "https://youtube-clone-6wbs.onrender.com/api";
     try {
       const response = await axios.post(`${BASE_URL}/v1/playlist/${playlistId}/${id}`, {}, {withCredentials: true});
-      console.log(response);
+    
       setisAddToPlaylistVisible(false);
     } catch (error) {
       console.log(error);
@@ -68,5 +68,6 @@ function AddToPlaylist({id}) {
     </div>
   )
 }
+
 
 export default AddToPlaylist
