@@ -23,7 +23,7 @@ function Login() {
       const response = await axios.post(`${BaseUrl}/v1/auth/login`, LoginInfo, {
         withCredentials: true,
       });
-      console.log(response);
+      
       navigate("/");
       setrefetchUser((prev) => !prev);
     } catch (error) {
