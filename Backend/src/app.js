@@ -13,7 +13,7 @@ import playlistRouter from './Routes/Playlist.route.js'
 export const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://youtube-clone-frontend-16rw.onrender.com",
     credentials: true,
 }));
 
@@ -29,5 +29,6 @@ app.use('/api/v1/channel', channelRouter);
 app.use('/api/v1/comment', commentRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/playlist', playlistRouter);
+
 
 app.use(GlobalErrorHandler);
