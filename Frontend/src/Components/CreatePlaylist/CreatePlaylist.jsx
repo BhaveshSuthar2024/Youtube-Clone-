@@ -23,7 +23,7 @@ function CreatePlaylist({id, page}) {
             },
             {withCredentials: true}
         );
-        console.log(response);
+       
         setplaylistName("");
         setisCreatePlaylistVisible(false)
         setplaylist(prev => [ response.data.playlist, ...prev ])
@@ -42,7 +42,7 @@ function CreatePlaylist({id, page}) {
             },
             {withCredentials: true}
         );
-        console.log(response);
+       
         setplaylistName("");
         setisCreatePlaylistVisible(false);
         setisNewPlaylistVisible(false);
@@ -85,5 +85,6 @@ function CreatePlaylist({id, page}) {
     </>
   )
 }
+
 
 export default CreatePlaylist
