@@ -103,7 +103,7 @@ function HomeScreenContainer() {
       const response = await axios.delete(`${BASE_URL}/v1/videos/${id}`, {
         withCredentials: true,
       });
-      console.log(response);
+     
       const newData = data.filter(
         (val) => val._id !== response.data.deletedVideo._id,
       );
@@ -113,7 +113,6 @@ function HomeScreenContainer() {
     }
   };
 
-  console.log(uploadContainerVisible);
   
 
   return (
