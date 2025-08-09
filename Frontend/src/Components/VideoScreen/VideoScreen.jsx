@@ -313,7 +313,7 @@ function VideoScreen() {
 
         try {
             const response = await axios.post(`${BASE_URL}/v1/comment/${videoId}`, {text: comment}, { withCredentials: true });
-            console.log(response);
+            
             await LoadComments(video._id);
             setcomment('')
         } catch (error) {
@@ -330,7 +330,7 @@ function VideoScreen() {
         try {
             if(video?._id){
                 const response = await axios.get(`${BASE_URL}/v1/comment/${videoId}`, { withCredentials: true });
-                console.log(response);
+              
                 settotalComments(response.data.totalComments);
                 setcomments(response.data.formattedComments || []);
             }
@@ -404,7 +404,7 @@ function VideoScreen() {
         
         try {
             const response = await axios.delete(`${BASE_URL}/v1/comment/${commentId}`, { withCredentials: true });
-            console.log(response);
+           
             LoadComments(video._id);
         } catch (error) {
             console.log(error);
@@ -428,7 +428,7 @@ function VideoScreen() {
         console.log(commentToBeEdited);
         try {
             const response = await axios.put(`${BASE_URL}/v1/comment/${commentId}`, {text: comment}, {withCredentials: true});
-            console.log(response);
+           
             setcomment('');
             LoadComments(video._id);
         } catch (error) {
@@ -551,7 +551,7 @@ function VideoScreen() {
 
         try {
             const response = await axios.post(`${BASE_URL}/v1/comment/reply/${commentId}`, {text: comment}, {withCredentials: true});
-            console.log(response);
+            
             setnewRepliedComment(response.data.repliedComment)
             setisFocus(false);
             setisReplyActivated(false);
@@ -579,7 +579,7 @@ function VideoScreen() {
 
         try {
             const response = await axios.get(`${BASE_URL}/v1/comment/reply/${commentId}`, {withCredentials: true});
-            console.log(response);
+     
             setsubcomments(response.data.formattedComments);
         } catch (error) {
             console.log(error);
@@ -958,5 +958,6 @@ function VideoScreen() {
     </>
   );
 }
+
 
 export default VideoScreen
