@@ -11,7 +11,7 @@ import sendOTP from '../Utils/Email.js';
 const options = {
     maxAge: parseInt(process.env.EXPIRES_IN),
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? "None" : "Lax",
+    sameSite: "None",
     secure: process.env.NODE_ENV === 'production'
 };
 
@@ -192,3 +192,4 @@ const logout = (req, res, next) => {
 
 
 export { addUser, login, logout, currentlyLoggedUser, generateOTP }
+
