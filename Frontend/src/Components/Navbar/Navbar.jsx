@@ -23,7 +23,7 @@ function Navbar() {
         {},
         { withCredentials: true },
       );
-      console.log("LogOut Successfully");
+     
       navigate("/login");
     } catch (error) {
       console.log(error);
