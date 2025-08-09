@@ -12,7 +12,7 @@ const options = {
     maxAge: parseInt(process.env.EXPIRES_IN),
     httpOnly: true,
     sameSite: "None",
-    secure: process.env.NODE_ENV === 'production'
+    secure: true
 };
 
 if(process.env.NODE_ENV === 'production'){
@@ -192,4 +192,5 @@ const logout = (req, res, next) => {
 
 
 export { addUser, login, logout, currentlyLoggedUser, generateOTP }
+
 
