@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import "./login.css";
+import "./Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import StateContext from "../../Context/StateContext";
