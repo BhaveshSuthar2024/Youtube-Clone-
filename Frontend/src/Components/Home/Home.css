@@ -1,0 +1,13 @@
+#home_container {
+  height: 100%;
+  width: 100%;
+  background-color: #0f0f0f;
+  overflow: hidden;
+  position: relative;
+}
+#container {
+  height: 94.913%;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+}
