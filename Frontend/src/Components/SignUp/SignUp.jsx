@@ -41,7 +41,6 @@ function SignUp() {
   const ProfileImgReader = (e) => {
     const file = e.target.files[0];
     setprofileImgLoacalPath(file);
-    console.log(file);
 
     if (file) {
       const reader = new FileReader();
@@ -85,7 +84,6 @@ function SignUp() {
       const response = await axios.post(`${BaseUrl}/v1/auth/signup`, formdata, {
         withCredentials: true,
       });
-      console.log(response);
       setcreateChannelVisible(true);
       setrefetchUser((prev) => !prev);
       setloading(false);
@@ -114,16 +112,7 @@ function SignUp() {
   };
 
   const GenerateChannelHandler = async () => {
-    console.log(
-      channelName,
-      channelDisc,
-      country,
-      language,
-      selectedTags,
-      coverImage,
-      channelPrivacy,
-      colorTheme,
-    );
+    
 
     const BaseUrl = "https://youtube-clone-6wbs.onrender.com/api";
 
@@ -144,7 +133,7 @@ function SignUp() {
         formdata,
         { withCredentials: true },
       );
-      console.log(response);
+      
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -156,7 +145,7 @@ function SignUp() {
     const BaseUrl = "https://youtube-clone-6wbs.onrender.com/api";
     try {
       const response = await axios.post(`${BaseUrl}/v1/auth/generateOTP`, {email: email});
-      console.log(response);
+      
     } catch (error) {
       console.log(error);
     }
@@ -167,9 +156,9 @@ function SignUp() {
     const BaseUrl = "https://youtube-clone-6wbs.onrender.com/api";
     try {
       const response = await axios.post(`${BaseUrl}/v1/auth/validateOTP`, {email: email, otp: otp});
-      console.log(response);
+      
       setisEmailVarified(response?.data?.isEmailVarified);
-      console.log(" : - ",response?.data?.isEmailVarified); 
+     
     } catch (error) {
       console.log(error);
     }
