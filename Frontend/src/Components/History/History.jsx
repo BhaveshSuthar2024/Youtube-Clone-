@@ -16,7 +16,7 @@ function History() {
 
     try {
       const response = await axios.get(`${BASE_URL}/v1/user/history`, {withCredentials: true});
-      console.log(response);
+      
       sethistory(response.data.user.watchHistory)
     } catch (error) {
       console.log(error);
@@ -33,7 +33,7 @@ function History() {
 
     try {
       const response = await axios.delete(`${BASE_URL}/v1/user/history`, {data: videoObj, withCredentials: true});
-      console.log(response);
+     
       HistoryHandler();
     } catch (error) {
       console.log(error);
