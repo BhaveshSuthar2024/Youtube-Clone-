@@ -1,0 +1,166 @@
+#container_login {
+  height: 50vh;
+  width: 60vw;
+  margin-top: 0vh;
+  box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.75);
+  display: flex;
+  margin-bottom: 10vh;
+  position: relative;
+  overflow: hidden;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 12px;
+}
+#form_container {
+  height: 100%;
+  width: 36%;
+  position: relative;
+  top: 0px;
+  left: 64%;
+  transition: all 0.8s ease-in-out;
+}
+#sign_in_form {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+  background-color: #fff;
+  transition: all 0.8s ease-in-out;
+}
+#sign_in_heading {
+  margin-top: 12%;
+  margin-bottom: 12%;
+  font-size: 32px;
+  letter-spacing: 0.5px;
+  font-family: Roboto;
+  font-weight: 400;
+}
+#sign_in_form form {
+  height: 45%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+}
+#sign_in_form form input {
+  width: 80%;
+  height: 32px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding-left: 10px;
+  font-size: 18px;
+  border-bottom: 2px solid rgb(170, 170, 170);
+}
+#sign_in_btn {
+  height: 36px;
+  width: 60%;
+  background-color: #ff0000;
+  border: 0px;
+  outline: none;
+  font-size: 18px;
+  color: white;
+  margin-top: 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#reset_pass,
+#or {
+  color: rgb(87, 87, 87);
+  font-size: 14px;
+}
+#other {
+  height: 40px;
+  width: auto;
+}
+#side_container {
+  height: 100%;
+  width: 64%;
+  position: relative;
+  transition: all 0.8s ease-in-out;
+  z-index: 6;
+  background-color: #ff0000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: -36%;
+}
+#side_sign_up {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 0px;
+  left: 25%;
+  z-index: 8;
+  background-color: #ff0000;
+  transition: all 0.8s ease-in-out;
+}
+#side_sign_up_heading {
+  font-size: 34px;
+  margin-top: 32%;
+
+  margin-bottom: 12%;
+  color: white;
+  font-family: Roboto;
+}
+#side_sign_up_text {
+  text-align: center;
+  font-size: 15px;
+  color: white;
+  width: 100%;
+  margin-bottom: 32%;
+  font-family: Roboto;
+}
+#side_sign_up_btn {
+  height: 8%;
+  width: 40%;
+  border: 0px;
+  outline: none;
+  border-radius: 30px;
+  background-color: transparent;
+  border: 1px solid white;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+}
+#side_sign_up_btn:active {
+  transform: scale(0.96);
+}
+#other {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 9%;
+  width: 40%;
+  margin-top: 4%;
+  justify-content: space-between;
+}
+.other_option {
+  height: 100%;
+  width: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+}
+.other_option img {
+  height: 60%;
+  cursor: pointer;
+  width: 60%;
+}
+.other_option:hover {
+  transform: scale(1.2);
+}
