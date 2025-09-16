@@ -51,9 +51,9 @@ function History() {
           <div id="day_wise_history_container">
             <div id="day_heading">Today</div>
             {history?.map((val, key) => (
-              <div id="history_video_container" onClick={(e) => {e.stopPropagation(); e.preventDefault(); navigate(`/video/${val.video._id}`);}}>
+              <div id="history_video_container" onClick={(e) => {e.stopPropagation(); e.preventDefault(); navigate(`/video/${val?.video?._id}`);}}>
                 <div id="history_video_thumbnail">
-                  <img src={val.video.thumbnailUrl} alt="" />
+                  <img src={val?.video?.thumbnailUrl} alt="" />
                 </div>
                 <div id="history_video_info">
                   <div className="history_video_buttons">
@@ -65,11 +65,11 @@ function History() {
                     </div>
                   </div>
                   <div id="history_video_name">
-                    {val.video.title}
+                    {val?.video?.title}
                   </div>
-                  <div id="history_video_extra_info">{val.video.channel.name}</div>
+                  <div id="history_video_extra_info">{val?.video?.channel?.name}</div>
                   <div id="history_video_discription">
-                    {val.video.description}
+                    {val?.video?.description}
                   </div>
                 </div>
               </div>
