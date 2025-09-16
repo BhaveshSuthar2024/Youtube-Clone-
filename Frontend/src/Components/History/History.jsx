@@ -50,7 +50,7 @@ function History() {
           <div id="history_container_heading">Watch History</div>
           <div id="day_wise_history_container">
             <div id="day_heading">Today</div>
-            {history.map((val, key) => (
+            {history?.map((val, key) => (
               <div id="history_video_container" onClick={(e) => {e.stopPropagation(); e.preventDefault(); navigate(`/video/${val.video._id}`);}}>
                 <div id="history_video_thumbnail">
                   <img src={val.video.thumbnailUrl} alt="" />
