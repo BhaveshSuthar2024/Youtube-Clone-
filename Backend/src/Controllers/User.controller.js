@@ -192,6 +192,7 @@ const getUserWatchHistory = asyncHandler( async(req, res, next) => {
 
     res.status(200).json({
         status: "Success",
+        message: "User Watch History",
         user
     });
 
@@ -280,5 +281,6 @@ const saveVideoHandler = asyncHandler( async(req, res, next) => {
         isVideoSaved
     });
 });
+
 
 export { getUserProfile, videolistHandler, watchHistoryHandler, getUserWatchHistory, removeVideofromHistory, saveVideoHandler };
