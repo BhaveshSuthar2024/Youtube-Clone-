@@ -17,8 +17,7 @@ This project replicates core YouTube functionality such as video uploads, playba
 - **User Profiles** – View channel details, banner, profile pic
 - **Responsive Design** – Works on mobile, tablet, and desktop
 - **Backend APIs** – RESTful endpoints built with Express and MongoDB
-- **Cloud Storage Support** – (Optional) Cloudinary / AWS S3 for video storage
-- **Dark/Light Theme** – Theme switcher for better UX
+- **Cloud Storage Support** – (Optional) Cloudinary
 
 ---
 
@@ -28,16 +27,11 @@ This project replicates core YouTube functionality such as video uploads, playba
 - React 18 with Hooks & Context API
 - React Router DOM
 - Axios for API calls
-- Tailwind CSS / Material UI (<!-- Update here -->)
 
 ### Backend
 - Node.js + Express.js
 - MongoDB + Mongoose ORM
 - JWT for Authentication
 - Multer for File Uploads
-- Cloudinary / AWS S3 for Media Storage (<!-- Update here -->)
-
----
-
-## 📂 Project Structure
+- Cloudinary 
 
