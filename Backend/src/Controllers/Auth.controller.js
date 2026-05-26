@@ -184,8 +184,8 @@ const currentlyLoggedUser = (req, res, next) => {
 const logout = (req, res, next) => {
     res.clearCookie('jwt', {
         httpOnly: true,
-        secure: false,
-        sameSite: "Strict",
+        secure: true,
+        sameSite: "None",
       });
       res.status(200).json("Successfully Logged Out")
 }
