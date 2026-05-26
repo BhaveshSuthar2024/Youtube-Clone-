@@ -23,7 +23,6 @@ function Navbar() {
         {},
         { withCredentials: true },
       );
-     console.log("ok");
       navigate("/login");
     } catch (error) {
       console.log(error);
