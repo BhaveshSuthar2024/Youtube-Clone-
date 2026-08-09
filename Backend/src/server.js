@@ -11,5 +11,3 @@ ConnectDB().then(() => {
         console.log(`Server Started listning on ${process.env.PORT}`);
     });
 });
-
-// This is entry point of the code
