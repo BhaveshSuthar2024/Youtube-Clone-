@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const sendOTP = async (email, OTP) => {
+
+    console.log('Brevo key prefix:', process.env.BREVO_API_KEY?.slice(0, 10), 'length:', process.env.BREVO_API_KEY?.length);
+    
     if (!process.env.BREVO_API_KEY || !process.env.BREVO_SENDER_EMAIL) {
         throw new Error('Email delivery is not configured.');
     }
