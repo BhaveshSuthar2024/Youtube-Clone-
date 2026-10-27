@@ -114,9 +114,14 @@ const generateOTP = asyncHandler( async(req, res, next) => {
 
     req.body.OTP = otp;
 
-    await OTP.create(req.body);
+    const otpRecord = await OTP.create(req.body);
 
-    sendOTP(email, otp);
+    try {
+        await sendOTP(email, otp);
+    } catch (error) {
+        await OTP.deleteOne({ _id: otpRecord._id });
+        throw error;
+    }
 
     res.status(200).json({
         status: "Success",
@@ -192,5 +197,4 @@ const logout = (req, res, next) => {
 
 
 export { addUser, login, logout, currentlyLoggedUser, generateOTP }
-
 

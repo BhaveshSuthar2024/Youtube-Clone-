@@ -3,7 +3,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const sendOTP = (email, OTP) => {
+const sendOTP = async (email, OTP) => {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        throw new Error('Email delivery is not configured. Set EMAIL_USER and EMAIL_PASS.');
+    }
 
     const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -22,13 +25,7 @@ const sendOTP = (email, OTP) => {
         html: `<h2>Your OTP is: ${OTP}</h2><p>This OTP is valid for 5 minutes.</p><small>If you did not request this, ignore it.</small>`,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error('Error sending email:', error);
-        } else {
-          console.log('Email sent:', info.response);
-        }
-    });
+    return transporter.sendMail(mailOptions);
 }
 
 export default sendOTP;
