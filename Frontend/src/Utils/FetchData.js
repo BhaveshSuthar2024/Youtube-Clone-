@@ -1,10 +1,9 @@
 import axios from "axios";
+import API_BASE_URL from "./api.js";
 
 const fetchData = async (endpoint) => {
-  const BASE_URL = "https://youtube-clone-6wbs.onrender.com/api";
-
   try {
-    const response = await axios.get(`${BASE_URL}/v1/videos/${endpoint}`, {
+    const response = await axios.get(`${API_BASE_URL}/v1/videos/${endpoint}`, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",

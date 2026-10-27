@@ -6,6 +6,7 @@ const StateContextProvider = ({ children }) => {
   const [uploadContainerVisible, setuploadContainerVisible] = useState(false);
   const [data, setdata] = useState();
   const [currentLoggedUser, setcurrentLoggedUser] = useState();
+  const [currentUserLoading, setcurrentUserLoading] = useState(true);
   const [refetchUser, setrefetchUser] = useState(false);
   const [isAddToPlaylistVisible, setisAddToPlaylistVisible] = useState(false);
   const [isVideoSaved, setisVideoSaved] = useState(false);
@@ -29,6 +30,8 @@ const StateContextProvider = ({ children }) => {
         setdata,
         currentLoggedUser,
         setcurrentLoggedUser,
+        currentUserLoading,
+        setcurrentUserLoading,
         refetchUser,
         setrefetchUser,
         isAddToPlaylistVisible,

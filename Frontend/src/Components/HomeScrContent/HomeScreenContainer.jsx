@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
-import fetchData from "../../Utils/FetchData.js";
 import { useNavigate } from "react-router-dom";
 import StateContext from "../../Context/StateContext";
 import "./HomeScreenContainer.css";
 import axios from "axios";
+import API_BASE_URL from "../../Utils/api.js";
 import UploadVideo from '../UploadVideo/UploadVideo.jsx'
 
 function HomeScreenContainer() {
@@ -20,14 +20,46 @@ function HomeScreenContainer() {
   const [isDragging, setisDragging] = useState(false);
   const [suggetionBarPosition, setsuggetionBarPosition] = useState(0);
   const [maxLeftScroll, setmaxLeftScroll] = useState(0);
+  const [videoLoadStatus, setvideoLoadStatus] = useState("loading");
+  const [retryVideoLoad, setretryVideoLoad] = useState(0);
 
   useEffect(() => {
+    let isActive = true;
+
     const fetchDataAsync = async () => {
-      const response = await fetchData("getAllVideos");
-      setdata(response.data.videos);
+      setvideoLoadStatus("loading");
+
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/v1/videos/getAllVideos`,
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+        if (!response?.data || !Array.isArray(response.data.videos)) {
+          throw new Error("The video feed could not be loaded.");
+        }
+
+        if (isActive) {
+          setdata(response.data.videos);
+          setvideoLoadStatus("success");
+        }
+      } catch (error) {
+        if (isActive) {
+          setvideoLoadStatus(
+            error.response?.status === 403 ? "unauthenticated" : "error",
+          );
+        }
+      }
     };
+
     fetchDataAsync();
-  }, []);
+
+    return () => {
+      isActive = false;
+    };
+  }, [retryVideoLoad, setdata]);
 
   const formatDuration = (seconds) => {
     const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0"); // Get hours
@@ -185,7 +217,23 @@ function HomeScreenContainer() {
         </div>
       </div>
       <div className="video_container">
-        {data?.length > 0 ? (
+        {videoLoadStatus === "loading" ? (
+          <div className="home_feed_message" role="status">Loading videos...</div>
+        ) : videoLoadStatus === "unauthenticated" ? (
+          <div className="home_feed_message">
+            <p>Sign in to watch videos and personalize your feed.</p>
+            <button type="button" onClick={() => navigate("/login")}>
+              Sign in
+            </button>
+          </div>
+        ) : videoLoadStatus === "error" ? (
+          <div className="home_feed_message" role="alert">
+            <p>Videos couldn&apos;t be loaded. Check your connection and try again.</p>
+            <button type="button" onClick={() => setretryVideoLoad((value) => value + 1)}>
+              Try again
+            </button>
+          </div>
+        ) : data?.length > 0 ? (
           data.map((val, key) => {
             return (
               <>
@@ -321,7 +369,7 @@ function HomeScreenContainer() {
             );
           })
         ) : (
-          <div>Loading</div>
+          <div className="home_feed_message">No videos are available yet.</div>
         )}
       </div>
     </div>

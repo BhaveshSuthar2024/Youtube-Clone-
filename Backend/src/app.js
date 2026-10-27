@@ -12,8 +12,20 @@ import playlistRouter from './Routes/Playlist.route.js'
 
 export const app = express();
 
+const allowedOrigins = [
+    "https://youtube-clone-frontend-16rw.onrender.com",
+];
+
 app.use(cors({
-    origin: "https://youtube-clone-frontend-16rw.onrender.com",
+    origin: (origin, callback) => {
+        const isLocalOrigin = origin && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
+
+        if (!origin || allowedOrigins.includes(origin) || isLocalOrigin) {
+            return callback(null, true);
+        }
+
+        return callback(null, false);
+    },
     credentials: true,
 }));
 

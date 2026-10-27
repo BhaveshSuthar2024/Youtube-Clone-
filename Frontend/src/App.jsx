@@ -15,28 +15,43 @@ import Shorts from "./Components/Shorts/Shorts";
 import Playlists from './Components/Playlists/Playlists'
 import axios from "axios";
 import StateContext from "./Context/StateContext";
+import API_BASE_URL from "./Utils/api";
 
 function App() {
-  const { setcurrentLoggedUser, currentLoggedUser, refetchUser } = useContext(StateContext);
+  const {
+    setcurrentLoggedUser,
+    setcurrentUserLoading,
+    refetchUser,
+  } = useContext(StateContext);
 
   useEffect(() => {
-    const fetchCurrentUser = async () => {
+    let isActive = true;
 
-      const BASE_URL = "https://youtube-clone-6wbs.onrender.com/api";
+    const fetchCurrentUser = async () => {
+      setcurrentUserLoading(true);
 
       try {
-        const response = await axios.get(`${BASE_URL}/v1/auth/currentUser`, { withCredentials: true });
-        setcurrentLoggedUser(response.data.loggedUser);
-      } catch (error) {
-        console.log(error);
+        const response = await axios.get(`${API_BASE_URL}/v1/auth/currentUser`, { withCredentials: true });
+        if (isActive) {
+          setcurrentLoggedUser(response.data.loggedUser);
+        }
+      } catch {
+        if (isActive) {
+          setcurrentLoggedUser(undefined);
+        }
+      } finally {
+        if (isActive) {
+          setcurrentUserLoading(false);
+        }
       }
-
     };
 
     fetchCurrentUser();
-  }, [refetchUser]);
 
-  console.log(currentLoggedUser);
+    return () => {
+      isActive = false;
+    };
+  }, [refetchUser, setcurrentLoggedUser, setcurrentUserLoading]);
 
   return (
     <>
