@@ -1,33 +1,44 @@
-import { Resend } from "resend";
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const sendOTP = async (email, OTP) => {
-  if (!process.env.RESEND_API_KEY) {
-    throw new Error("Email delivery is not configured.");
-  }
+    if (!process.env.BREVO_API_KEY || !process.env.BREVO_SENDER_EMAIL) {
+        throw new Error('Email delivery is not configured.');
+    }
 
-  const { data, error } = await resend.emails.send({
-    from: "YouTube Clone <onboarding@resend.dev>",
-    to: email,
-    subject: "Your OTP for YouTube",
-    html: `
-            <h2>Your OTP is: ${OTP}</h2>
-            <p>This OTP is valid for 5 minutes.</p>
-            <small>If you did not request this, ignore it.</small>
-        `,
-  });
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+            'accept': 'application/json',
+            'content-type': 'application/json',
+            'api-key': process.env.BREVO_API_KEY,
+        },
+        body: JSON.stringify({
+            sender: {
+                name: 'YouTube Clone',
+                email: process.env.BREVO_SENDER_EMAIL,
+            },
+            to: [{ email }],
+            subject: 'Your OTP for YouTube',
+            htmlContent: `
+                <h2>Your OTP is: ${OTP}</h2>
+                <p>This OTP is valid for 5 minutes.</p>
+                <small>If you did not request this, ignore it.</small>
+            `,
+        }),
+        signal: AbortSignal.timeout(15000),
+    });
 
-  if (error) {
-    console.error("Email sending failed:", error);
-    throw new Error(error.message);
-  }
+    const data = await response.json().catch(() => ({}));
 
-  console.log("Email sent:", data.id);
-  return data;
+    if (!response.ok) {
+        console.error('Email sending failed:', response.status, data);
+        throw new Error(data.message || 'Failed to send email.');
+    }
+
+    console.log('Email sent:', data.messageId);
+    return data;
 };
 
 export default sendOTP;
