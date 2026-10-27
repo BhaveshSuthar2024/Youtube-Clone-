@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import "./SignUp.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import Select from "react-select";
 import StateContext from "../../Context/StateContext";
 import Lottie from "lottie-react";
 import AnimationData from "../../../public/Animation.json";
+import API_BASE_URL from "../../Utils/api.js";
 
 function SignUp() {
   const [firstname, setfirstname] = useState("");
@@ -33,7 +34,12 @@ function SignUp() {
   const [colorTheme, setcolorTheme] = useState("");
   const [coverImagePreview, setcoverImagePreview] = useState(null);
   const [isEmailVarified, setisEmailVarified] = useState(false);
-  const [otp, setotp] = useState('')
+  const [otp, setotp] = useState("");
+  const [isSendingOTP, setisSendingOTP] = useState(false);
+  const [isVerifyingOTP, setisVerifyingOTP] = useState(false);
+  const [isOTPSent, setisOTPSent] = useState(false);
+  const [otpMessage, setotpMessage] = useState("");
+  const [otpMessageType, setotpMessageType] = useState("");
 
   const navigate = useNavigate();
   const { setrefetchUser } = useContext(StateContext);
@@ -55,8 +61,6 @@ function SignUp() {
   const RegisterHandler = async () => {
     setloading(true);
 
-    const BaseUrl = "https://youtube-clone-6wbs.onrender.com/api";
-
     const formdata = new FormData();
 
     formdata.append("firstname", firstname);
@@ -69,19 +73,8 @@ function SignUp() {
     formdata.append("profileImage", profileImgLoacalPath);
     formdata.append("isEmailVarified", isEmailVarified);
 
-    console.log(
-      firstname,
-      lastname,
-      username,
-      email,
-      password,
-      confirmPassword,
-      dob,
-      profileImgLoacalPath,
-    );
-
     try {
-      const response = await axios.post(`${BaseUrl}/v1/auth/signup`, formdata, {
+      await axios.post(`${API_BASE_URL}/v1/auth/signup`, formdata, {
         withCredentials: true,
       });
       setcreateChannelVisible(true);
@@ -114,8 +107,6 @@ function SignUp() {
   const GenerateChannelHandler = async () => {
     
 
-    const BaseUrl = "https://youtube-clone-6wbs.onrender.com/api";
-
     const formdata = new FormData();
 
     formdata.append("name", channelName);
@@ -128,8 +119,8 @@ function SignUp() {
     
 
     try {
-      const response = await axios.post(
-        `${BaseUrl}/v1/channel/createChannel`,
+      await axios.post(
+        `${API_BASE_URL}/v1/channel/createChannel`,
         formdata,
         { withCredentials: true },
       );
@@ -140,29 +131,64 @@ function SignUp() {
     }
   };
 
-  const generateOTP = async() => {
-
-    const BaseUrl = "https://youtube-clone-6wbs.onrender.com/api";
-    try {
-      const response = await axios.post(`${BaseUrl}/v1/auth/generateOTP`, {email: email});
-      
-    } catch (error) {
-      console.log(error);
+  const generateOTP = async () => {
+    if (!email.trim()) {
+      setotpMessage("Enter your email address first.");
+      setotpMessageType("error");
+      return;
     }
-  }
 
-  const validateOTP = async() => {
-
-    const BaseUrl = "https://youtube-clone-6wbs.onrender.com/api";
+    setisSendingOTP(true);
+    setotpMessage("");
     try {
-      const response = await axios.post(`${BaseUrl}/v1/auth/validateOTP`, {email: email, otp: otp});
-      
+      const response = await axios.post(
+        `${API_BASE_URL}/v1/auth/generateOTP`,
+        { email: email.trim() },
+      );
+      setisOTPSent(true);
+      setotp("");
+      setotpMessage(response.data?.message || "A verification code was sent to your email.");
+      setotpMessageType("success");
+    } catch (error) {
+      setotpMessage(
+        error.response?.data?.message ||
+          "We couldn’t send a code. Check your email and try again.",
+      );
+      setotpMessageType("error");
+    } finally {
+      setisSendingOTP(false);
+    }
+  };
+
+  const validateOTP = async () => {
+    if (otp.length !== 6) {
+      setotpMessage("Enter the 6-digit code from your email.");
+      setotpMessageType("error");
+      return;
+    }
+
+    setisVerifyingOTP(true);
+    setotpMessage("");
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/v1/auth/validateOTP`,
+        { email: email.trim(), otp },
+      );
       setisEmailVarified(response?.data?.isEmailVarified);
-     
+      setotpMessage(
+        response.data?.message || "Your email has been verified.",
+      );
+      setotpMessageType("success");
     } catch (error) {
-      console.log(error);
+      setotpMessage(
+        error.response?.data?.message ||
+          "That code could not be verified. Try again or request a new one.",
+      );
+      setotpMessageType("error");
+    } finally {
+      setisVerifyingOTP(false);
     }
-  }
+  };
 
   return (
     <>
@@ -177,168 +203,213 @@ function SignUp() {
                     navigate(-1);
                   }}
                 >
-                  <i class="fa-solid fa-arrow-left"></i>
+                  <i className="fa-solid fa-arrow-left"></i>
                 </div>
-                <div id="signup_heading">Register</div>
-                <div id="register_with_Google_container">
+                <header className="signup_header">
+                  <p className="signup_eyebrow">JOIN THE COMMUNITY</p>
+                  <h1 id="signup_heading">Create your account</h1>
+                  <p className="signup_intro">
+                    Sign up to save videos, build playlists, and create your
+                    channel.
+                  </p>
+                </header>
+                <button id="register_with_Google_container" type="button">
                   <div id="register_with_Google_icon_container">
                     <img src="search.png" alt="" />
                   </div>
                   <div id="register_with_Google_text">Register With Google</div>
-                </div>
-                <div id="partition">
+                </button>
+                <div id="partition" aria-hidden="true">
                   <div id="partition_text">or</div>
                 </div>
-                <div id="signup_form">
-                  <div
-                    id="first_last_name_container"
-                    className="signup_form_elements"
-                  >
-                    <div className="name_container_element">
-                      <div id="name_container_icon">
-                        <i class="fa-solid fa-pencil"></i>
-                      </div>
-                      <label htmlFor="firstname">First Name</label>
-                      <input
-                        type="text"
-                        name=""
-                        id="firstname"
-                        placeholder="First Name"
-                        value={firstname}
-                        onChange={(e) => {
-                          setfirstname(e.target.value);
-                        }}
-                      />
-                    </div>
-                    <div className="name_container_element">
-                      <div id="name_container_icon">
-                        <i class="fa-solid fa-pencil"></i>
-                      </div>
-                      <label htmlFor="lastname">Last Name</label>
-                      <input
-                        type="text"
-                        name=""
-                        id="lastname"
-                        placeholder="Last Name"
-                        value={lastname}
-                        onChange={(e) => {
-                          setlastname(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div id="username_container" className="signup_form_elements">
-                    <div id="signup_form_icon">
-                      <i class="fa-regular fa-user"></i>
-                    </div>
-                    <label htmlFor="lastname">Username</label>
-                    <input
-                      type="text"
-                      name=""
-                      id="lastname"
-                      placeholder="Username"
-                      value={username}
-                      onChange={(e) => {
-                        setusername(e.target.value);
-                      }}
-                    />
-                  </div>
-
-                  <div
-                    id="first_last_name_container"
-                    className="signup_form_elements"
-                  >
-                    <div className="name_container_element_email">
-                      <div id="signup_form_icon">
-                        <i class="fa-solid fa-envelope"></i>
-                      </div>
-                      <label htmlFor="lastname">Email</label>
-                      <input
-                        type="text"
-                        name=""
-                        id="lastname"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => {
-                          setemail(e.target.value);
-                        }}
-                      />
-                      <div id="get_otp" onClick={() => {generateOTP()}}>Get OTP</div>
-                    </div>
-                    <div className="name_container_element_otp">
-                      <label htmlFor="lastname">Enter OTP</label>
-                      <input
-                        type="number"
-                        name=""
-                        id="lastname"
-                        placeholder="OTP"
-                        value={otp}
-                        min="100000" max="999999"
-                        onChange={(e) => {
-                          setotp(e.target.value);
-                        }}
-                      />
-                      <div id="submit_otp" onClick={() => {validateOTP()}}>Submit</div>
-                    </div>
-                  </div>
-
-                  <div id="username_container" className="signup_form_elements">
-                    <div id="signup_form_icon">
-                      <i class="fa-solid fa-key"></i>
-                    </div>
-                    <label htmlFor="lastname">Password</label>
-                    <input
-                      type="text"
-                      name=""
-                      id="lastname"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => {
-                        setpassword(e.target.value);
-                      }}
-                    />
-                  </div>
-
-                  <div id="username_container" className="signup_form_elements">
-                    <div id="signup_form_icon">
-                      <i class="fa-solid fa-key"></i>
-                    </div>
-                    <label htmlFor="lastname">Confirm Password</label>
-                    <input
-                      type="text"
-                      name=""
-                      id="lastname"
-                      placeholder="Confirm Password"
-                      value={confirmPassword}
-                      onChange={(e) => {
-                        setconfirmPassword(e.target.value);
-                      }}
-                    />
-                  </div>
-
-                  <div id="permission_select_container_signup">
-                    <input type="checkbox" name="permission" id="permission" />
-                    <label
-                      htmlFor="permission"
-                      onClick={() => {
-                        setpermission((prev) => !prev);
-                      }}
-                    >
-                      I Accept all the platform guidelines. I will not perform
-                      anything that is against platform regulation.
-                    </label>
-                  </div>
-                </div>
-
-                <div
-                  id="next_signup_button"
-                  onClick={() => {
+                <form
+                  id="signup_form"
+                  className="signup_form"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    if (!isEmailVarified) {
+                      setotpMessage("Verify your email address to continue.");
+                      setotpMessageType("error");
+                      return;
+                    }
                     setisBasicInfoCompleted(true);
                   }}
                 >
-                  Next
-                </div>
+                  <div className="signup_field_grid signup_name_fields">
+                    <div className="signup_field">
+                      <label htmlFor="signup_firstname">First name</label>
+                      <input
+                        id="signup_firstname"
+                        type="text"
+                        placeholder="First name"
+                        autoComplete="given-name"
+                        required
+                        value={firstname}
+                        onChange={(e) => setfirstname(e.target.value)}
+                      />
+                    </div>
+                    <div className="signup_field">
+                      <label htmlFor="signup_lastname">Last name</label>
+                      <input
+                        id="signup_lastname"
+                        type="text"
+                        placeholder="Last name"
+                        autoComplete="family-name"
+                        required
+                        value={lastname}
+                        onChange={(e) => setlastname(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="signup_field">
+                    <label htmlFor="signup_username">Username</label>
+                    <input
+                      id="signup_username"
+                      type="text"
+                      placeholder="Choose a username"
+                      autoComplete="username"
+                      required
+                      value={username}
+                      onChange={(e) => setusername(e.target.value)}
+                    />
+                  </div>
+
+                  <section className="signup_verification" aria-labelledby="email_verification_heading">
+                    <div className="verification_heading">
+                      <div>
+                        <h2 id="email_verification_heading">Email address</h2>
+                        <p>We’ll send a 6-digit code to confirm it’s yours.</p>
+                      </div>
+                      <span
+                        className={`verification_badge${isEmailVarified ? " is_verified" : ""}`}
+                      >
+                        <i
+                          className={`fa-solid ${isEmailVarified ? "fa-circle-check" : "fa-envelope"}`}
+                          aria-hidden="true"
+                        />
+                        {isEmailVarified ? "Verified" : "Required"}
+                      </span>
+                    </div>
+                    <div className="verification_input_row">
+                      <input
+                        id="signup_email"
+                        type="email"
+                        placeholder="you@example.com"
+                        autoComplete="email"
+                        aria-label="Email address"
+                        required
+                        value={email}
+                        onChange={(e) => {
+                          setemail(e.target.value);
+                          setisEmailVarified(false);
+                          setisOTPSent(false);
+                          setotp("");
+                          setotpMessage("");
+                          setotpMessageType("");
+                        }}
+                      />
+                      <button
+                        className="verification_action"
+                        type="button"
+                        onClick={generateOTP}
+                        disabled={isSendingOTP || isEmailVarified}
+                      >
+                        {isEmailVarified
+                          ? "Verified"
+                          : isSendingOTP
+                            ? "Sending..."
+                            : isOTPSent
+                              ? "Resend code"
+                              : "Send code"}
+                      </button>
+                    </div>
+                    {isOTPSent && !isEmailVarified && (
+                      <div className="verification_code_row">
+                        <input
+                          id="signup_otp"
+                          type="text"
+                          inputMode="numeric"
+                          autoComplete="one-time-code"
+                          placeholder="6-digit code"
+                          aria-label="6-digit email verification code"
+                          maxLength={6}
+                          value={otp}
+                          onChange={(e) =>
+                            setotp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                          }
+                        />
+                        <button
+                          className="verification_action verification_confirm"
+                          type="button"
+                          onClick={validateOTP}
+                          disabled={otp.length !== 6 || isVerifyingOTP}
+                        >
+                          {isVerifyingOTP ? "Checking..." : "Verify email"}
+                        </button>
+                      </div>
+                    )}
+                    {otpMessage && (
+                      <p
+                        className={`verification_message ${otpMessageType}`}
+                        role={otpMessageType === "error" ? "alert" : "status"}
+                      >
+                        {otpMessage}
+                      </p>
+                    )}
+                  </section>
+
+                  <div className="signup_field_grid signup_name_fields">
+                    <div className="signup_field">
+                      <label htmlFor="signup_password">Password</label>
+                      <input
+                        id="signup_password"
+                        type="password"
+                        placeholder="Create a password"
+                        autoComplete="new-password"
+                        required
+                        value={password}
+                        onChange={(e) => setpassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="signup_field">
+                      <label htmlFor="signup_confirm_password">
+                        Confirm password
+                      </label>
+                      <input
+                        id="signup_confirm_password"
+                        type="password"
+                        placeholder="Repeat your password"
+                        autoComplete="new-password"
+                        required
+                        value={confirmPassword}
+                        onChange={(e) => setconfirmPassword(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <label className="signup_consent">
+                    <input
+                      type="checkbox"
+                      name="permission"
+                      checked={permission}
+                      onChange={(e) => setpermission(e.target.checked)}
+                    />
+                    <span>
+                      I accept the platform guidelines and agree to follow
+                      community regulations.
+                    </span>
+                  </label>
+
+                  <button
+                    id="next_signup_button"
+                    type="submit"
+                    disabled={!isEmailVarified}
+                  >
+                    Continue
+                    <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+                  </button>
+                </form>
               </div>
             )}
 
@@ -350,7 +421,7 @@ function SignUp() {
                     setisBasicInfoCompleted(false);
                   }}
                 >
-                  <i class="fa-solid fa-arrow-left"></i>
+                  <i className="fa-solid fa-arrow-left"></i>
                 </div>
                 <div id="profile_img_dob_heading">
                   Enter Your Personal Information
@@ -410,7 +481,7 @@ function SignUp() {
                 <div id="channel_form">
                   <div id="username_container" className="signup_form_elements">
                     <div id="signup_form_icon">
-                      <i class="fa-regular fa-user"></i>
+                      <i className="fa-regular fa-user"></i>
                     </div>
                     <label htmlFor="channelName">Channel Name</label>
                     <input
@@ -430,7 +501,7 @@ function SignUp() {
                     className="signup_form_elements"
                   >
                     <div id="signup_form_icon">
-                      <i class="fa-solid fa-envelope"></i>
+                      <i className="fa-solid fa-envelope"></i>
                     </div>
                     <label htmlFor="channelDisc">Channel Discription</label>
                     <textarea
@@ -451,7 +522,7 @@ function SignUp() {
                   >
                     <div className="name_container_element">
                       <div id="name_container_icon">
-                        <i class="fa-solid fa-pencil"></i>
+                        <i className="fa-solid fa-pencil"></i>
                       </div>
                       <label htmlFor="firstname">Country</label>
                       <select
@@ -461,16 +532,16 @@ function SignUp() {
                           setcountry(e.target.value);
                         }}
                       >
-                        {countryList.map((val, key) => (
-                          <>
-                            <option value={val.name}>{val.name}</option>
-                          </>
+                        {countryList.map((val) => (
+                          <option key={val.name} value={val.name}>
+                            {val.name}
+                          </option>
                         ))}
                       </select>
                     </div>
                     <div className="name_container_element">
                       <div id="name_container_icon">
-                        <i class="fa-solid fa-pencil"></i>
+                        <i className="fa-solid fa-pencil"></i>
                       </div>
                       <label htmlFor="lastname">Language</label>
                       <select
@@ -480,10 +551,10 @@ function SignUp() {
                           setlanguage(e.target.value);
                         }}
                       >
-                        {languageList.map((val, key) => (
-                          <>
-                            <option value={val.language}>{val.language}</option>
-                          </>
+                        {languageList.map((val) => (
+                          <option key={val.language} value={val.language}>
+                            {val.language}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -494,7 +565,7 @@ function SignUp() {
                     className="signup_form_elements tags"
                   >
                     <div id="signup_form_icon">
-                      <i class="fa-solid fa-key"></i>
+                      <i className="fa-solid fa-key"></i>
                     </div>
                     <label htmlFor="lastname">Select Tags</label>
                     <Select
@@ -541,7 +612,7 @@ function SignUp() {
                   >
                     <div className="name_container_element">
                       <div id="name_container_icon">
-                        <i class="fa-solid fa-pencil"></i>
+                        <i className="fa-solid fa-pencil"></i>
                       </div>
                       <label htmlFor="firstname">Privacy</label>
                       <select
@@ -551,16 +622,16 @@ function SignUp() {
                           setchannelPrivacy(e.target.value);
                         }}
                       >
-                        {privacy.map((val, key) => (
-                          <>
-                            <option value={val}>{val}</option>
-                          </>
+                        {privacy.map((val) => (
+                          <option key={val} value={val}>
+                            {val}
+                          </option>
                         ))}
                       </select>
                     </div>
                     <div className="name_container_element color-picker">
                       <div id="name_container_icon">
-                        <i class="fa-solid fa-pencil"></i>
+                        <i className="fa-solid fa-pencil"></i>
                       </div>
                       <label htmlFor="lastname">Channel Theme</label>
                       <input
