@@ -1,31 +1,33 @@
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
+import { Resend } from "resend";
+import dotenv from "dotenv";
 
 dotenv.config();
 
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 const sendOTP = async (email, OTP) => {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        throw new Error('Email delivery is not configured. Set EMAIL_USER and EMAIL_PASS.');
-    }
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("Email delivery is not configured.");
+  }
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
-    
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Your OTP for Youtube',
-        html: `<h2>Your OTP is: ${OTP}</h2><p>This OTP is valid for 5 minutes.</p><small>If you did not request this, ignore it.</small>`,
-    };
+  const { data, error } = await resend.emails.send({
+    from: "YouTube Clone <onboarding@resend.dev>",
+    to: email,
+    subject: "Your OTP for YouTube",
+    html: `
+            <h2>Your OTP is: ${OTP}</h2>
+            <p>This OTP is valid for 5 minutes.</p>
+            <small>If you did not request this, ignore it.</small>
+        `,
+  });
 
-    return transporter.sendMail(mailOptions);
-}
+  if (error) {
+    console.error("Email sending failed:", error);
+    throw new Error(error.message);
+  }
+
+  console.log("Email sent:", data.id);
+  return data;
+};
 
 export default sendOTP;
