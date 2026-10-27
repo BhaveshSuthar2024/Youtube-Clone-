@@ -4,6 +4,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.error('Email credentials are missing.');
+}
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -12,13 +16,14 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 60000,
 });
 
 const sendOTP = async (email, OTP) => {
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        throw new Error(
-            'Email delivery is not configured. Check EMAIL_USER and EMAIL_PASS.'
-        );
+        throw new Error('Email delivery is not configured.');
     }
 
     try {
@@ -33,14 +38,13 @@ const sendOTP = async (email, OTP) => {
             `,
         });
 
-        console.log('Email sent:', info.messageId);
+        console.log('Email accepted by SMTP server:', info.messageId);
         return info;
     } catch (error) {
-        console.error('Nodemailer error:', {
+        console.error('Email sending failed:', {
             code: error.code,
             command: error.command,
             responseCode: error.responseCode,
-            response: error.response,
             message: error.message,
         });
 
